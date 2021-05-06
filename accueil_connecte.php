@@ -2,7 +2,7 @@
         session_start();
 	require 'util.php';
 	
-	//bouton déconnexion
+	//Bouton déconnexion
 	if(isset($_GET['action']) && !empty($_GET['action']) && $_GET['action'] == 'logout'){
 		detruireSession();
 		header('Location: index.php');
@@ -18,7 +18,7 @@
 	<body>	
 		<h1>Page d'accueil</h1>
 
-		<!--L'utilisateur doit être connecté pour voir cette page-->
+		<!--L'utilisateur doit être connecté pour voir cette page--->
 		<?php if(estConnecte()): ?>
 
                 <!--Message temporaire pour la démo-->
