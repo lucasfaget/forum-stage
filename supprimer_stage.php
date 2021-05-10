@@ -1,8 +1,7 @@
 <?php
+session_start();
 
-	session_start();
-
-	require('connexionbdd.php');
+	require('connexion.php');
 
 	//Récupérer et vérifier si idstage n'est pas null
 	if(isset($_GET['idstage'])) {
@@ -12,7 +11,7 @@
 		$idstage = $_GET['idstage'];
 
 		// Requête de suppression des données selon idstage
-		$sql = 'DELETE FROM Stage WHERE Id_stage = :idstage';
+		$sql = 'DELETE FROM stage WHERE Id_stage = :idstage';
 
 		$req = $bdd->prepare($sql);
 
@@ -20,8 +19,8 @@
 
 		// Vérifier la requête et redirection
 		if($exec) {
+			header('Location: affichagestageentreprise.php');
 			echo "La suppression a bien été effectuée.";
-			header('Location: affichagestage.php');
 		} else {
 			echo "Échec de la suppression.";
 		}
