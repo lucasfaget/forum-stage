@@ -151,11 +151,11 @@
 			<p>
 				<label>Selectionnez votre diplôme :</label> 
 				<select name="selection_diplome_etu">
-					<option>DUT Informatique 1ere Annee</option>
-					<option>DUT Informatique 2eme Annee</option>
-					<option>DUT Informatique Annee Speciale</option>
-					<option>LPro DQL</option>
-					<option>LPro GTIDM</option>
+					<option>DUT Informatique - 1ère annee</option>
+					<option>DUT Informatique - 2ème année</option>
+					<option>DUT Informatique - Année spéciale</option>
+					<option>Licence Pro - DQL</option>
+					<option>Licence Pro - GTIDM</option>
 				</select>
 			</p>
 			

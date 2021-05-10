@@ -21,7 +21,7 @@
 			$verificationMail;
 			
             //Requête admin
-			$reqConnexionAdmin = $bdd->prepare('SELECT * FROM Administrateur WHERE Login_admin = ?');
+			$reqConnexionAdmin = $bdd->prepare('SELECT * FROM administrateur WHERE Login_admin = ?');
 			$reqConnexionAdmin->execute(array($saisie_mail));
 			foreach($reqConnexionAdmin as $resConnexion){
 				$pass_attendu = $resConnexion['Mot_de_passe'];
@@ -29,7 +29,7 @@
 			}
 
 			//Requête entreprise
-			$reqConnexionEntrp = $bdd->prepare('SELECT Mail, Mot_de_passe FROM Entreprise WHERE Mail = ?');
+			$reqConnexionEntrp = $bdd->prepare('SELECT Mail, Mot_de_passe FROM entreprise WHERE Mail = ?');
 			$reqConnexionEntrp ->execute(array($saisie_mail));
 			foreach($reqConnexionEntrp as $resConnexion){
 				$pass_attendu = $resConnexion['Mot_de_passe'];
@@ -37,7 +37,7 @@
 			}
 
             //Requête étudiant
-			$reqConnexionEtu = $bdd->prepare('SELECT Mail, Mot_de_passe, Mail_confirme FROM Etudiant WHERE Mail = ?');
+			$reqConnexionEtu = $bdd->prepare('SELECT Mail, Mot_de_passe, Mail_confirme FROM etudiant WHERE Mail = ?');
 			$reqConnexionEtu ->execute(array($saisie_mail));
 			foreach($reqConnexionEtu as $resConnexion){
 				$verificationMail = $resConnexion['Mail_confirme'];
@@ -50,11 +50,11 @@
 				if($verificationMail == 1){
 					if(password_verify($saisie_mdp, $pass_attendu)){
                                         
-                        //enregistrement des variables SESSION pour les étudiants
+                        //Enregistrement des variables SESSION pour les étudiants
 						$_SESSION['userId'] = $saisie_mail;
 						$_SESSION['userType'] = $type_utilisateur;
 						$_SESSION['userNom'] = $resConnexion['Nom'];
-						$_SESSION['userPrénom'] = $resConnexion['Prenom'];
+						$_SESSION['userPrenom'] = $resConnexion['Prenom'];
 						header('Location: accueil_connecte.php');
 					}else{
 						header('Location: index.php?err_connexion=MauvaisMailOuMdp');
@@ -85,32 +85,32 @@
 	<body>	
 		<h1>Page d'accueil</h1>
 	
-		<?php
-                        ///Messages d'erreurs de saisie dans le formulaire
+<?php
+         	///Messages d'erreurs de saisie dans le formulaire
 			if(isset($_GET['err_connexion'])){
 				$erreur = htmlspecialchars($_GET['err_connexion']);
 				
 				switch($erreur){
 					case 'MauvaisMailOuMdp';
-                                        ?>
+?>
 						<div>
-							<strong>Erreur</strong> mot de passe ou mail incorrect
+							<strong>Erreur :</strong> Mot de passe ou mail incorrect.
 						</div>
-					<?php
+<?php
 					break;
 					case 'MailNonVerife';
-                                        ?>
+?>
 						<div>
-							<strong>Erreur</strong> l'adresse mail de ce compte n'est pas encore vérifiée
+							<strong>Erreur :</strong> L'adresse mail de ce compte n'est pas encore vérifiée.
 						</div>
-					<?php
+<?php
 					break;
 					case 'ChampsVide';
-                                        ?>
+?>
 						<div>
-							<strong>Erreur</strong> merci de remplir tous les champs
+							<strong>Erreur :</strong> Merci de remplir tous les champs.
 						</div>
-					<?php
+<?php
 					break;
 				}
 			}
