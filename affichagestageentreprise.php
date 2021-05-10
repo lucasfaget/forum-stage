@@ -1,8 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang=fr>
 
     <head>
         <title>Stages</title>
+        <meta charset="utf-8">
+        <script src="https://kit.fontawesome.com/2dcde6ae9c.js" crossorigin="anonymous"></script>
+        <script type='text/javascript'>
+            function confirmationSuppression(id) {
+            // Afficher une fenêtre avec les boutons ok ou annuler
+            // si ok appuyer
+            if( confirm("Etes-vous sûr de vouloir supprimer ce stage ?")) {
+                // on fait la redirection vers la page qui effectue l'action
+            document.location.replace("supprimer_stage.php?idstage="+id+"");
+            }else {
+                // ceci annulera l'action par defaut du lien
+                return false;
+            }
+            }
+        </script>
+        <link rel="stylesheet" href="style.css">
     </head>
 
     <body>
@@ -18,14 +34,14 @@
 </html>
 
 <?php
-        require('util.php');
+        require('connexion.php');
 
         // Ajouter if(isset($_GET['identreprise'])) (ou SESSION entreprise) {
 
         $bdd = connexionservermysql($server, $db, $login, $mdp);
 
         // Requête d'affichage des stages selon identreprise
-        $sql = 'SELECT * FROM stage'; //ajouter WHERE Id_entreprise = ?
+        $sql = 'SELECT * FROM stage ORDER BY Intitule'; //ajouter WHERE Id_entreprise = ?
         $req = $bdd->prepare($sql);
         $req->execute(); // mettre array('identreprise'=>$identreprise) dans execute
 
@@ -34,12 +50,11 @@
 
             echo "<thead>";
                 echo "<tr>";
-                    echo "<th scope=\"col\">Numéro du stage</th>";
                     echo "<th scope=\"col\">Intitulé du stage</th>";
                     echo "<th scope=\"col\">Nombre de postes</th>";
                     echo "<th scope=\"col\">Attribuer le(s) poste(s)*</th>";
-                    echo "<th scope=\"col\"></th>";
-                    echo "<th scope=\"col\"></th>";
+                    echo "<th scope=\"col\">Modifier</th>";
+                    echo "<th scope=\"col\">Supprimer</th>";
                 echo "</tr>";
             echo "</thead>";
 
@@ -52,7 +67,6 @@
 
             echo "<tbody>";
                 echo "<tr>";
-                    echo "<td>".$idstage."</td>";
                     echo "<td>".$intitulestage."</td>";
                     echo "<td>".$nbpostesstage."</td>";
                     echo "<td><input type=text list=candidat>
@@ -60,16 +74,15 @@
                                     <option> Candidat 1
                                     <option> Candidat 2
                                 </datalist></td>";
-                    echo "<td><a href=\"modificationstage.php?idstage=".$idstage."\"><img src=\"modifier.png\" alt=\"logo modifier\"/></a></td>";
-                    echo "<td><a href=\"suppressionstage.php?idstage=".$idstage."\"><img src=\"supprimer.png\" alt=\"logo supprimer\"/></a></td>";
+                    echo "<td><a href=\"modifier_stage.php?idstage=".$idstage."\"><i class=\"far fa-2x fa-edit\"></i></a></td>";
+                    echo "<td><i class=\"fas fa-2x fa-trash-alt\" onclick=\"confirmationSuppression(".$idstage.")\"></i></td>";
                 echo "</tr>";
             echo "</tbody>";
         }
-
         echo "</table>";
 
         //Ajout bouton pour ajouter stage avec redirection
-        echo "<a href=\"ajoutstage.php\"><img src=\"ajouter.png\" alt=\"logo ajouter\"/></a>";
+        echo "<a href=\"ajoutpatient.php\"><i class=\"fas fa-2x fa-user-plus\"></i><span> Nouveau stage</span></a>";
 
         //Ajouter }
 ?>
