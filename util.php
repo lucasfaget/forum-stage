@@ -1,18 +1,4 @@
-<?php
-require('config.php');
-	
-    /*
-	Fait le lien avec la base de données du site.
-	*/
-	function connexionservermysql($bd_server, $db_bd, $bd_identifiant, $bd_mdp) {
-   		try{
-            $linkpdo = new PDO("mysql:host=$bd_server;dbname=$db_db", $bd_identifiant, $bd_mdp);
-        }catch( Exception$e){
-            die('Erreur : ' . $e->getMessage());
-       	}
-        return $linkpdo;
-    }
-        
+<?php	        
     /*
 	Détruit les sessions en cours et deconnecte l'utilisateur.
 	*/

@@ -1,38 +1,43 @@
 <?php
-        session_start();
-	require 'util.php';
-	require 'config.php';
-	
+    session_start();
+    require ("util.php");
+	require ("connexion.php");
 	
 	if(isset($_POST['btn_connexion'])){
         
-                //vérification des champs obligatoires
-	 	if(isset($_POST['saisie_mail']) && !empty($_POST['saisie_mail']) &&
-		 isset($_POST['saisie_mdp']) && !empty($_POST['saisie_mdp'])){
-			
-                        //protection des données saisies
+        //Vérification des champs obligatoires
+	 	if(	isset($_POST['saisie_mail']) && 
+	 		!empty($_POST['saisie_mail']) &&
+		 	isset($_POST['saisie_mdp']) && 
+		 	!empty($_POST['saisie_mdp'])){
+
+	 		$bdd = connexionservermysql($server, $db, $login, $mdp);
+
+            //Protection des données saisies
 			$saisie_mail = htmlspecialchars($_POST['saisie_mail']);
 			$saisie_mdp = htmlspecialchars($_POST['saisie_mdp']);
 			$type_utilisateur; 
 			$pass_attendu;
 			$verificationMail;
 			
-                        //Requête admin
-			$reqConnexionAdmin = $linkpdo->prepare('SELECT * FROM Administrateur WHERE Login_admin = ?');
+            //Requête admin
+			$reqConnexionAdmin = $bdd->prepare('SELECT * FROM Administrateur WHERE Login_admin = ?');
 			$reqConnexionAdmin->execute(array($saisie_mail));
 			foreach($reqConnexionAdmin as $resConnexion){
 				$pass_attendu = $resConnexion['Mot_de_passe'];
 				$type_utilisateur = 'administrateur';
 			}
+
 			//Requête entreprise
-			$reqConnexionEntrp = $linkpdo->prepare('SELECT Mail, Mot_de_passe FROM Entreprise WHERE Mail = ?');
+			$reqConnexionEntrp = $bdd->prepare('SELECT Mail, Mot_de_passe FROM Entreprise WHERE Mail = ?');
 			$reqConnexionEntrp ->execute(array($saisie_mail));
 			foreach($reqConnexionEntrp as $resConnexion){
 				$pass_attendu = $resConnexion['Mot_de_passe'];
 				$type_utilisateur = 'entreprise';
 			}
-                        //Requête étudiant
-			$reqConnexionEtu = $linkpdo->prepare('SELECT Mail, Mot_de_passe, Mail_confirme FROM Etudiant WHERE Mail = ?');
+
+            //Requête étudiant
+			$reqConnexionEtu = $bdd->prepare('SELECT Mail, Mot_de_passe, Mail_confirme FROM Etudiant WHERE Mail = ?');
 			$reqConnexionEtu ->execute(array($saisie_mail));
 			foreach($reqConnexionEtu as $resConnexion){
 				$verificationMail = $resConnexion['Mail_confirme'];
@@ -41,30 +46,34 @@
 			}
 			
 			if($type_utilisateur == 'étudiant'){
-                                //l'utilisateur est un étudiant, son adresse mail doit être validée
+                //Si l'utilisateur est un étudiant, son adresse mail doit être validée
 				if($verificationMail == 1){
 					if(password_verify($saisie_mdp, $pass_attendu)){
                                         
-                                                //enregistrement des variables SESSION pour les étudiant
+                        //enregistrement des variables SESSION pour les étudiants
 						$_SESSION['userId'] = $saisie_mail;
 						$_SESSION['userType'] = $type_utilisateur;
 						$_SESSION['userNom'] = $resConnexion['Nom'];
 						$_SESSION['userPrénom'] = $resConnexion['Prenom'];
 						header('Location: accueil_connecte.php');
-					}else
+					}else{
 						header('Location: index.php?err_connexion=MauvaisMailOuMdp');
-				}else
+					}
+				}else{
 					header('Location: index.php?err_connexion=MailNonVerife');
+				}
 			}elseif(password_verify($saisie_mdp, $pass_attendu)){
                                
-                               //enregistrement des variables SESSION pour les entreprises et administrateurs
+                //Enregistrement des variables SESSION pour les entreprises et administrateurs
 				$_SESSION['userId'] = $saisie_mail;
 				$_SESSION['userType'] = $type_utilisateur;
 				header('Location: accueil_connecte.php');
-			}else 
+			}else{
 				header('Location: index.php?err_connexion=MauvaisMailOuMdp');
-		}else 
+			}
+		}else{ 
 			header('Location: index.php?err_connexion=ChampsVide');
+		}
 	}
 ?>
 <!DOCTYPE HTML>

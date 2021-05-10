@@ -1,7 +1,5 @@
 <?php
-
-	require 'config.php';
-
+	require ("connexion.php");
 ?>
 
 <!DOCTYPE html>
@@ -19,10 +17,12 @@
 
     	$array_heure = array(0 => '08:00:00', 1 => '08:30:00', 2 => '09:00:00', 3 => '09:30:00', 4 => '10:30:00', 5 => '11:00:00', 6 => '11:30:00', 7 => '12:00:00', 8 => '13:00:00', 9 => '13:30:00', 10 => '14:00:00', 11 => '14:30:00', 12 => '15:00:00', 13  => '16:00:00', 14 => '16:30:00', 15 => '17:00:00');
 
-    	$select_etp = $link->prepare('SELECT Etp.NomEntr FROM entreprise Etp');
+    	$bdd = connexionservermysql($server, $db, $login, $mdp);
+    	
+    	$select_etp = $bdd->prepare('SELECT Etp.NomEntr FROM entreprise Etp');
     	$select_etp->execute();
 
-    	$select_rdv = $link->prepare('SELECT concat(E.NomEtu, " ", substr(E.PrenomEtu,1,1), ".") AS NomP, R.Creneau AS Heure FROM etudiant E, reserver R, stage S, entreprise Etp WHERE E.Id_etudiant = R.Id_etudiant AND R.Id_stage = S.Id_stage AND S.Id_entreprise = Etp.Id_entreprise AND Etp.NomEntr = ? ORDER BY R.Creneau'); ?>
+    	$select_rdv = $bdd->prepare('SELECT concat(E.NomEtu, " ", substr(E.PrenomEtu,1,1), ".") AS NomP, R.Creneau AS Heure FROM etudiant E, reserver R, stage S, entreprise Etp WHERE E.Id_etudiant = R.Id_etudiant AND R.Id_stage = S.Id_stage AND S.Id_entreprise = Etp.Id_entreprise AND Etp.NomEntr = ? ORDER BY R.Creneau'); ?>
 
     	<div class="table-responsive">
 	    	<table class="table">

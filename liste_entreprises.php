@@ -10,7 +10,7 @@
 
 <body>
 	<header>
-	
+		
 	</header>
 
 	<main>
@@ -20,8 +20,8 @@
 			<tr>
 <?php
 	//Requêtes SQL visant à récupérer la liste de toutes les entreprises
-	$reqListeEntreprises = $link->prepare('SELECT *	FROM 
-													entreprise'); 
+	$reqListeEntreprises = $bdd->prepare('SELECT *	FROM 
+														entreprise'); 
 
 	$reqListeEntreprises->execute();
 

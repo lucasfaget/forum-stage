@@ -1,12 +1,11 @@
 <?php
-        session_start();
-	require 'util.php';
-	require 'config.php';
-	
+    session_start();
+	require ("util.php");
+	require ("connexion.php");
 	
 	if(isset($_POST['btn_valider_inscription'])){
         
-                //vérification des champs obligatoires
+        //vérification des champs obligatoires
 		if(isset($_POST['saisie_mail_etu']) && !empty($_POST['saisie_mail_etu']) &&
 		 isset($_POST['saisie_prenom_etu']) && !empty($_POST['saisie_prenom_etu']) &&
 		 isset($_POST['selection_diplome_etu']) && !empty($_POST['selection_diplome_etu']) &&
@@ -23,10 +22,12 @@
 			
 			//concatenation de l'adresse mail
 			$mail_etu = $mail_etu.'@etu.iut-tlse3.fr';
-			
+
+			$bdd = connexionservermysql($server, $db, $login, $mdp);
+
 			//vérification d'un profil déjà existant en base de donnée
-			$reqVerif = $linkpdo->prepare('SELECT Mail, Mot_de_passe FROM Etudiant WHERE Mail = ?');
-			$reqVerif  ->execute(array($mail_etu));
+			$reqVerif = $bdd->prepare('SELECT Mail, Mot_de_passe FROM Etudiant WHERE Mail = ?');
+			$reqVerif->execute(array($mail_etu));
 			$resVerif = $reqVerif->fetch();
 			$row = $reqVerif->rowCount();
 
@@ -34,23 +35,23 @@
 				if(motDePasseValide($mdp_etu)){
 					if($mdp_etu == $confirmation_mdp_etu){
 						
-						//générer une clé de vérification pour confirmer le mail
+						//Générer une clé de vérification pour confirmer le mail
 						$cleVerif = md5(time().$mail_etu);
 						
-						//cryptage du mot de passe
+						//Cryptage du mot de passe
 						$mdp_etu = password_hash($mdp_etu, PASSWORD_BCRYPT);
 						
 						//Inscription de l'étudiant dans la base de données
-						$reqInscription = $linkpdo->prepare('
-							INSERT INTO Etudiant(Mail, Nom, Prenom, Mot_de_passe, Diplome, Cle_confirmation)
+						$reqInscription = $bdd->prepare('
+							INSERT INTO etudiant(Mail, NomEtu, PrenomEtu, Mot_de_passe, Diplome, Cle_confirmation)
 							VALUES(:mail, :nom, :prenom, :mdp, :diplome, :cle)');
-						$reqInscription ->execute(array(
+						$reqInscription->execute(array(
 							'mail' => $mail_etu,
 							'nom' => $nom_etu,
 							'prenom' => $prenom_etu,
 							'mdp' => $mdp_etu,
 							'diplome' => $diplome_etu,
-                                                        'cle' => $cleVerif
+                            'cle' => $cleVerif
 						));
 						
 						//envoyer un mail de confirmation de l'adresse mail
@@ -62,7 +63,6 @@
                                                 $message = "Merci de confirmer votre adresse avec ce lien : http://forumstageiut.tk/verification.php?cleVerif=$cleVerif";
 						mail($mail_etu, $objet, $message, $headers);
                                                 header('Location: inscription_etudiant.php?mail=mailEnvoye');
-					
 					}else 
 						header('Location: inscription_etudiant.php?err_inscription=confirmationMdp');
 				}else 
