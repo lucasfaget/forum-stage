@@ -73,35 +73,7 @@
                                 $insert_cle->execute(array($recup_cle, $recup_mail));
                             }
 
-                            $header="MIME-Version: 1.0\r\n";
-                            $header.='From:forumstageiut.tk'."\n";
-                            $header.='Content-Type:text/html; charset="utf-8"'."\n";
-                            $header.='Content-Transfer-Encoding: 8bit';
-                            $message = '
-                            <html>
-                                <head>
-                                    <title>Récupération de mot de passe - forumstageiut.tk</title>
-                                    <meta charset="utf-8" />
-                                </head>
-                                <body>
-                                    <table align="center" rules="rows">
-                                        <tr>
-                                            <td>
-                                                <h2 align="center">Réinitialisation de votre mot de passe</h2>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <p>Bonjour,</p>
-                                                <p>Afin de réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous.</p>
-                                                <p><a href="http://forumstageiut.tk/mdp_oublie2.php?key='.$recup_cle.'">Réinitialiser mon mot de passe</a></p>
-                                                <p>Ceci est un mail automatique, merci de ne pas répondre</p>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </body>
-                            </html>
-                            ';
+                            envoiMail($recup_mail, "Récupération de mot de passe", $recup_cle);
 
                             if (mail($recup_mail, "Récupération de mot de passe", $message, $header)) {
 

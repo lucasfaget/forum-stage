@@ -1,5 +1,7 @@
 <?php
-	include ("config.php");
+	session_start();
+	require ("util.php");
+    require ("connexion.php");
 ?>
 
 <!DOCTYPE html>
@@ -9,128 +11,150 @@
 	<title>Recherche</title>
 </head>
 
-	<body>
+<body>
+	
+	<header>
+<?php 
+	require ("header.php");
+?>
+	</header>
+	<main>
+		
 		<h1> Je recherche un stage</h1>
 
 		<!-- Section de recherche -->
 		<section>
-			<form method="POST">
+		<form method="POST">
 		<!-- Recherche par durée (valeur basse)--------------------------------------------------------->
-				<p>Durée minimum</p>
-				<select name="dureeBot">
-					<option selected></option>
-
-				<?php
-				//Requêtes SQL visant à générer les valeurs pour les différents critères
-				$reqDureeBot = $link->prepare('SELECT DISTINCT * FROM Stage ORDER BY Duree');
-				$reqDureeBot->execute();
+			<p>Durée minimum</p>
+			<select name="dureeBot">
+				<option selected></option>
+<?php
+	$bdd = connexionservermysql($server, $db, $login, $mdp);
+	//Requêtes SQL visant à générer les valeurs pour les différents critères
+	$reqDureeBot = $bdd->prepare('SELECT DISTINCT * FROM Stage ORDER BY Duree');
+	$reqDureeBot->execute();
 				
-			//----Bloc recherche durée fourchette basse	
-				while ($data = $reqDureeBot->fetch()) {
-				?>
-					<option value="<?php echo $data['Duree']; ?>"> <?php echo $data['Duree']; ?> semaine(s)</option>
+	//----Bloc recherche durée fourchette basse	
+	while ($data = $reqDureeBot->fetch()) {
+?>
+				<option value="<?php echo $data['Duree']; ?>"> <?php echo $data['Duree']; ?> semaine(s)</option>
 
-				<?php
-				}
-				?>
-				</select>
+<?php
+	}
+?>
+			</select>
 	
-		<!-- Recherche par durée (valeur haute)--------------------------------------------------------------->
-				<p>Durée maximum</p>
-				<select name="dureeTop">
-					<option selected></option>
-		<?php
-			//Requête SQL
-			$reqDureeTop = $link->prepare('SELECT DISTINCT * FROM Stage ORDER BY Duree');
-			$reqDureeTop->execute();	
+	<!-- Recherche par durée (valeur haute)--------------------------------------------------------------->
+			<p>Durée maximum</p>
+			<select name="dureeTop">
+				<option selected></option>
+<?php
+	//Requête SQL
+	$reqDureeTop = $bdd->prepare('SELECT DISTINCT * FROM Stage ORDER BY Duree');
+	$reqDureeTop->execute();	
 
-			while($data = $reqDureeTop->fetch()) {
-		?>
-					<option value="<?php echo $data['Duree']; ?>"> <?php echo $data['Duree']; ?> semaine(s)</option>
-		<?php
+	while($data = $reqDureeTop->fetch()) {
+?>
+				<option value="<?php echo $data['Duree']; ?>"> <?php echo $data['Duree']; ?> semaine(s)</option>
+<?php
 			}
-		?>
-				</select>
+?>
+			</select>
 
-		<!-- Recherche par compétence--------------------------------------------------------------------------->
-				<p>Compétence requise</p>
-				<select name="competence">
-					<option selected></option>
-		<?php
-			//Requête SQL
-			$reqCompetence = $link->prepare('SELECT DISTINCT * FROM Stage');
-			$reqCompetence->execute();
+	<!-- Recherche par compétence--------------------------------------------------------------------------->
+			<p>Compétence requise</p>
+			<select name="competence">
+				<option selected></option>
+<?php
+	//Requête SQL
+	$reqCompetence = $bdd->prepare('SELECT DISTINCT * FROM Stage');
+	$reqCompetence->execute();
 
-			while($data = $reqCompetence->fetch()) {
-		?>
-					<option> <?php echo $data['Competence_requise']; ?></option>
-		<?php
-			}
-		?>
-				</select>
+	while($data = $reqCompetence->fetch()) {
+?>
+				<option> <?php echo $data['Competence_requise']; ?></option>
+<?php
+	}
+?>
+			</select>
 
 		<!-- Recherche par nom d'organisme----------------------------------------------------------------------->
-				<p>Nom de l'organisme</p>
-				<select name="nomOrganisme">
-					<option selected></option>
-		<?php
-			//Requête SQL
-			$reqOrganisme = $link->prepare('SELECT DISTINCT * FROM Entreprise');
-			$reqOrganisme->execute();
+			<p>Nom de l'organisme</p>
+			<select name="nomOrganisme">
+				<option selected></option>
+<?php
+	//Requête SQL
+	$reqOrganisme = $bdd->prepare('SELECT DISTINCT * FROM Entreprise');
+	$reqOrganisme->execute();
 
-			while($data = $reqOrganisme->fetch()) {
-		?>
-					<option> <?php echo $data['NomEntr']; ?></option>
-		<?php
-			}
-		?>
-				</select>
-				<input type="submit" name="rechercher" value="Rechercher"> 
-			</form>
-		</section>
+	while($data = $reqOrganisme->fetch()) {
+?>
+				<option> <?php echo $data['NomEntr']; ?></option>
+<?php
+	}
+?>
+			</select>
+			<input type="submit" name="rechercher" value="Rechercher"> 
+		</form>
+	</section>
 
-		<?php
+<?php
+	if(isset($_POST['rechercher'])){	
+?>
+	<section>
+<?php
+	//Texte constituant la requête SQL qui sera incrémenté en fonction des critères choisis
+	$texteRequete = 'SELECT DISTINCT 
+								entreprise.Id_entreprise, 
+								entreprise.NomEntr, 
+								stage.Id_stage, 
+								stage.Intitule, 
+								stage.Description, 
+								stage.Duree, 
+								stage.Competence_requise 
+							FROM 
+								entreprise, 
+								stage 
+							WHERE 
+								entreprise.Id_entreprise = stage.Id_entreprise';
 
-		if(isset($_POST['rechercher'])){	
+	//Texte constituant la requête SQL permettant de connaitre le nombre de résultats relatifs à la recherche
+	$texteRequeteNbStage = 'SELECT COUNT(*) AS nbstage 
+											FROM 
+												entreprise, stage 
+											WHERE 
+												entreprise.Id_entreprise = stage.Id_entreprise';
 
-		?>
-			<section>
-		<?php
+	//Texte constituant les différents critères sous forme de requête à concatener aux textes de base.
+	$criteresRecherche = '';
+	//Texte constituant les arguments qui seront concaténés dans le "array" pour le execute
+	$parametresRecherche = array();
+	//Compteur d'arguments permettant de décider à chaque critères s'il faut rajouter la mention ' AND ' avant le rajout du critère
+	$nbArg = 0;
 
-			//Texte constituant la requête SQL qui sera incrémenté en fonction des critères choisis
-			$texteRequete = 'SELECT DISTINCT entreprise.Id_entreprise, entreprise.NomEntr, stage.Id_stage, stage.Intitule, stage.Description, stage.Duree, stage.Competence_requise FROM entreprise, stage WHERE entreprise.Id_entreprise = stage.Id_entreprise';
-			//Texte constituant la requête SQL permettant de connaitre le nombre de résultats relatifs à la recherche
-			$texteRequeteNbStage = 'SELECT COUNT(*) AS nbstage FROM entreprise, stage WHERE entreprise.Id_entreprise = stage.Id_entreprise';
+	//Gestion de l'existence d'un seul critère--------------------------------------
+	if(	$_POST['dureeBot']     != "" || 
+		$_POST['dureeTop']     != "" || 
+		$_POST['competence']   != "" || 
+		$_POST['nomOrganisme'] != "" ) 
+	{
+		$texteRequete = $texteRequete.' AND ';
+		$texteRequeteNbStage = $texteRequeteNbStage.' AND ';
+	}
 
-			//Texte constituant les différents critères sous forme de requête à concatener aux textes de base.
-			$criteresRecherche = '';
-			//Texte constituant les arguments qui seront concaténés dans le "array" pour le execute
-			$parametresRecherche = array();
-			//Compteur d'arguments permettant de décider à chaque critères s'il faut rajouter la mention ' AND ' avant le rajout du critère
-			$nbArg = 0;
-
-			//Gestion de l'existence d'un seul critère--------------------------------------
-			if($_POST['dureeBot']     != "" || 
-			   $_POST['dureeTop']     != "" || 
-			   $_POST['competence']  != "" || 
-			   $_POST['nomOrganisme'] != "" )
-			{
-				$texteRequete = $texteRequete.' AND ';
-				$texteRequeteNbStage = $texteRequeteNbStage.' AND ';
-			}
-
-			//Gestion de la durée----------------------------------------------------------------
+	//Gestion de la durée----------------------------------------------------------------
 			
-			//Si la durée minimale et la durée maximale sont renseignées
-			if($_POST['dureeBot'] != "" && 
-			   $_POST['dureeTop'] != "" )
-			{
-				$criteresRecherche = $criteresRecherche.'Duree BETWEEN ? AND ?';
+	//Si la durée minimale et la durée maximale sont renseignées
+	if(	$_POST['dureeBot'] != "" && 
+		$_POST['dureeTop'] != "" )
+	{
+		$criteresRecherche = $criteresRecherche.'Duree BETWEEN ? AND ?';
 
-				$parametresRecherche[] = $_POST['dureeBot'];
-				$parametresRecherche[] = $_POST['dureeTop'];
-				$nbArg++;
-			}
+		$parametresRecherche[] = $_POST['dureeBot'];
+		$parametresRecherche[] = $_POST['dureeTop'];
+		$nbArg++;
+	}
 			
 			//Si seule la durée minimale est renseignée
 			if($_POST['dureeBot'] != "" &&
@@ -184,10 +208,10 @@
 				$texteRequeteNbStage = $texteRequeteNbStage.$criteresRecherche;
 
 				//Préparation des requêtes SQL
-				$reqRechercheStage = $link->prepare($texteRequete);
+				$reqRechercheStage = $bdd->prepare($texteRequete);
 				$reqRechercheStage->execute($parametresRecherche);
 
-				$reqNbStage = $link->prepare($texteRequeteNbStage);
+				$reqNbStage = $bdd->prepare($texteRequeteNbStage);
 				$reqNbStage->execute($parametresRecherche);
 
 				$total = 0;
@@ -227,6 +251,7 @@
 		}
 		?>
 			</section>
+		</main>
 	</body>
 </html>
 
