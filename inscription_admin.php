@@ -17,7 +17,7 @@
 													(:login, :mdp)');
 
 		$reqInscription->execute(array(	'login' 	=> $_POST['saisie_login'],
-										'mdp' 	=> $mdp_admin));
+										'mdp' 		=> $mdp_admin));
 	}
 ?>
 <!DOCTYPE HTML>

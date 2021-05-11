@@ -12,16 +12,22 @@
 	if (isset($_POST['creerEntreprise'])) {
 
 		$bdd = connexionservermysql($server, $db, $login, $mdp);
+
+		//Cryptage du mot de passe
+		$mdp_provisoire = password_hash($_POST['mdpProvisoire'], PASSWORD_BCRYPT);
+
 		$reqCreerEntreprise = $bdd->prepare('INSERT INTO
 														entreprise(Mot_de_passe, Mail, NomEntr)
 													VALUES
 														(:mdp, :mail, :nom)');
 
-		$reqCreerEntreprise->execute(array(	'mdp' 	=> $_POST['mdpProvisoire'],
+		$reqCreerEntreprise->execute(array(	'mdp' 	=> $mdp_provisoire,
 											'mail' 	=> $_POST['mailEntreprise'],
 											'nom' 	=> $_POST['nomEntreprise']));
 
-		envoiMail($_POST['mailEntreprise'], "Création de compte - Forum Stage", $_POST['mdpProvisoire']);
+		/*envoiMailMdpProvisoireEntreprise(	$_POST['mailEntreprise'], 
+											"Création de compte - Forum Stage", 
+											$_POST['mdpProvisoire']);*/
 	}
 ?>
 <!DOCTYPE HTML>
@@ -46,7 +52,7 @@
 ?>   
 		<h1>Créer un compte entreprise</h1>
 
-		<form action="./creer_compte_entreprise" method="POST">
+		<form action="./creer_compte_entreprise.php" method="POST">
 
 			<label>Entrez le nom de l'entreprise :</label>
 			<input 	type="text" 
@@ -58,7 +64,7 @@
 <?php
     		$mdpProvisoire = genererMdp(8);
 ?>
-			<input 	type="hidden" 
+			<input 	type="text" 
 					name="mdpProvisoire"
 					value="<?php echo $mdpProvisoire; ?>">
 
