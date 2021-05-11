@@ -1,3 +1,47 @@
+<?php
+require('connexion.php');
+    //Récupérer et vérifier si identreprise n'est pas nul
+    if(isset($_GET['identreprise'])) { //ou session entreprise
+
+        $bdd = connexionservermysql($server, $db, $login, $mdp);
+
+        //Requêtes pour récupérer les données concernant l'entreprise et les afficher sur le formulaire
+        $sqlEnt = 'SELECT * FROM entreprise WHERE Id_entreprise = ?';
+        $reqEnt = $bdd->prepare($sqlEnt);
+        $reqEnt->execute(array($_GET['identreprise']));
+
+        $dataEnt = $reqEnt->fetch();
+
+        $nomEnt = $dataEnt['NomEntr'];
+        $presentationEnt = $dataEnt['Presentation'];
+        $logoEnt = $dataEnt['NomLogo'];
+        $identreprise = $dataEnt['Id_entreprise'];
+
+        $sqlRep = 'SELECT * FROM representant WHERE Id_entreprise = ?';
+        $reqRep = $bdd->prepare($sqlRep);
+        $reqRep->execute(array($_GET['identreprise']));
+
+        while($dataRep = $reqRep->fetch()) {
+
+            $nomRep1 = $dataRep['NomRepr'][0];
+            $prenomRep1 = $dataRep['PrenomRepr'][0];
+            $telephoneRep1 = $dataRep['Telephone'][0];
+            $debutdispo1 = $dataRep['Debut_dispo'][0];
+            $findispo1 = $dataRep['Fin_dispo'][0];
+            $idrepresentant1 = $dataRep['Id_representant'][0];
+            $nomRep2 = $dataRep['NomRepr'][1];
+            $prenomRep2 = $dataRep['PrenomRepr'][1];
+            $telephoneRep2 = $dataRep['Telephone'][1];
+            $debutdispo2 = $dataRep['Debut_dispo'][1];
+            $findispo2 = $dataRep['Fin_dispo'][1];
+            $idrepresentant2 = $dataRep['Id_representant'][1];
+            $identreprise = $dataEnt['Id_entreprise'];
+
+        }
+
+    }
+?>
+
 <!DOCTYPE html>
 <html lang=fr>
 
@@ -28,13 +72,14 @@
 
         <h2>Vos informations</h2>
 
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
+        <form action="<<?php echo "affichagestagentreprise.php?identreprise=".$identreprise; ?>" method="POST" enctype="multipart/form-data">
+
+            <input type='hidden' name='identreprise' value="<?php echo $identreprise; ?>">
 
             <label>Présentation de l'entreprise : </label>
-            <p><textarea name="presentation" rows="20" cols="100" pattern="[A-Za-z0-9' -#+]+" minlength="2" wrap="hard" spellcheck="true"></textarea></p>
+            <p><textarea name="presentation" rows="20" cols="100" pattern="[A-Za-z0-9' -#+]+" minlength="2" wrap="hard" spellcheck="true" value="<?php echo $presentationEnt; ?>"></textarea></p>
 
             <?php
-                require('connexion.php');
 
                 $bdd = connexionservermysql($server, $db, $login, $mdp);
 
@@ -45,6 +90,7 @@
                 while ($dataLogo = $reqAffLogo->fetch()) {
                     echo "<img src='./ressources/logos/".$dataLogo['NomLogo']."' width='100px' height='100px'></br>";
                 }
+                echo "$nomEnt";
             ?>
 
             <label for="file">Ajouter un logo (.jpg, .jpeg ou .png) :</label>
@@ -54,38 +100,130 @@
 
             <p>Représentant n°1</p>
 
+            <input type='hidden' name='idrepresentant1' value="<?php echo $idrepresentant1; ?>">
+
             <label>Nom : </label>
-            <p><input type="text" name="nom" pattern="[A-Za-z' -]+" minlength="2" maxlength="50"></p>
+            <p><input type="text" name="nomrep1" pattern="[A-Za-z' -]+" minlength="2" maxlength="50" value="<?php echo $nomRep1; ?>"></p>
 
             <label>Prénom : </label>
-            <p><input type="text" name="prenom" pattern="[A-Za-z' -]+" minlength="2" maxlength="50"></p>
+            <p><input type="text" name="prenomrep1" pattern="[A-Za-z' -]+" minlength="2" maxlength="50" value="<?php echo $prenomRep1; ?>"></p>
 
             <label>Numéro de téléphone : </label>
-            <p><input type="text" name="telephone" pattern="[0-9]+" minlength="10" maxlength="10"></p>
+            <p><input type="text" name="telephonerep1" pattern="[0-9]+" minlength="10" maxlength="10" value="<?php echo $telephoneRep1; ?>"></p>
 
             <label>Disponibilité : </label>
-            <p><input type="time" name="dispodebut" pattern="[0-9:]+" minlength="5" maxlength="8"></p>
-            <p><input type="time" name="dispofin" pattern="[0-9:]+" minlength="5" maxlength="8"></p>
+            <p><input type="time" name="dispodebutrep1" pattern="[0-9:]+" minlength="5" maxlength="8" value="<?php echo $debutdispo1; ?>"></p>
+            <p><input type="time" name="dispofinrep1" pattern="[0-9:]+" minlength="5" maxlength="8" value="<?php echo $findispo1; ?>"></p>
 
             <p>Représentant n°2</p>
 
+            <input type='hidden' name='idrepresentant2' value="<?php echo $idrepresentant2; ?>">
+
             <label>Nom : </label>
-            <p><input type="text" name="nom" pattern="[A-Za-z' -]+" minlength="2" maxlength="50"></p>
+            <p><input type="text" name="nomrep2" pattern="[A-Za-z' -]+" minlength="2" maxlength="50" value="<?php echo $nomRep2; ?>"></p>
 
             <label>Prénom : </label>
-            <p><input type="text" name="prenom" pattern="[A-Za-z' -]+" minlength="2" maxlength="50"></p>
+            <p><input type="text" name="prenomrep2" pattern="[A-Za-z' -]+" minlength="2" maxlength="50" value="<?php echo $prenomRep2; ?>"></p>
 
             <label>Numéro de téléphone : </label>
-            <p><input type="text" name="telephone" pattern="[0-9]+" minlength="10" maxlength="10"></p>
+            <p><input type="text" name="telephonerep2" pattern="[0-9]+" minlength="10" maxlength="10" value="<?php echo $telephoneRep2; ?>"></p>
 
             <label>Disponibilité : </label>
-            <p><input type="time" name="dispodebut" pattern="[0-9:]+" minlength="5" maxlength="8"></p>
-            <p><input type="time" name="dispofin" pattern="[0-9:]+" minlength="5" maxlength="8"></p>
+            <p><input type="time" name="dispodebutrep2" pattern="[0-9:]+" minlength="5" maxlength="8" value="<?php echo $debutdispo2; ?>"></p>
+            <p><input type="time" name="dispofinrep2" pattern="[0-9:]+" minlength="5" maxlength="8" value="<?php echo $findispo2; ?>"></p>
 
             <button type="submit" name="enregistrer"><i class="fas fa-2x fa-check-square"></i><span>Enregistrer les informations</span></button>
         </form>
 
         <?php
+        if ($idrepresentant1 != null && $idrepresentant2 != null) {
+            // Vérifier que tous les champs soit remplis et que le bouton enregistrer ne soit pas null
+            if(isset($_POST['enregistrer']) && !empty($_POST['presentation']) && !empty($_POST['nomrep1']) && !empty($_POST['prenomrep1']) && !empty($_POST['telephonerep1']) && !empty($_POST['dispodebutrep1']) && !empty($_POST['dispofinrep1'])) {
+
+                $bdd = connexionservermysql($server, $db, $login, $mdp);
+
+                $presentation = $_POST['presentation'];
+                $nomrep1 = $_POST['nomrep1'];
+                $prenomrep1 = $_POST['prenomrep1'];
+                $telephonerep1 = $_POST['telephonerep1'];
+                $dispodebutrep1 = $_POST['dispodebutrep1'];
+                $dispofinrep1 = $_POST['dispofinrep1'];
+                $idrepresentant1 = $_POST['idrepresentant1'];
+                $nomrep2 = $_POST['nomrep2'];
+                $prenomrep2 = $_POST['prenomrep2'];
+                $telephonerep2 = $_POST['telephonerep2'];
+                $dispodebutrep2 = $_POST['dispodebutrep2'];
+                $dispofinrep2 = $_POST['dispofinrep2'];
+                $idrepresentant2 = $_POST['idrepresentant2'];
+                $identreprise = $_POST['identreprise'];
+
+                // Requête de mise à jour des données
+                $sqlEnt = 'UPDATE entreprise SET Presentation = :presentation WHERE Id_entreprise = :identreprise';
+
+                $reqEnt = $bdd->prepare($sqlEnt);
+
+                $execEnt = $reqEnt->execute(array('presentation'=>$presentation, 'identreprise'=>$identreprise));
+
+                $sqlRep1 = 'UPDATE representant SET NomRepr = :nom, PrenomRepr = :prenom, Telephone = :telephone, Debut_dispo = :debutdispo, Fin_dispo = :findispo WHERE Id_entreprise = :identreprise AND Id_representant = :idrepresentant';
+
+                $reqRep1 = $bdd->prepare($sqlRep1);
+
+                $execRep1 = $reqRep1->execute(array('nom'=>$nomrep1, 'prenom'=>$prenomrep1, 'telephone'=>$telephonerep1, 'debutdispo'=>$dispodebutrep1, 'findispo'=>$dispofinrep1, 'identreprise'=>$identreprise, 'idrepresentant'=>$idrepresentant1));
+
+                $execRep2 = $reqRep1->execute(array('nom'=>$nomrep2, 'prenom'=>$prenomrep2, 'telephone'=>$telephonerep2, 'debutdispo'=>$dispodebutrep2, 'findispo'=>$dispofinrep2, 'identreprise'=>$identreprise, 'idrepresentant'=>$idrepresentant2));
+
+                // Vérifier la requête et redirection
+                if($execRep2 && $execRep1) {
+                    echo "La modification a bien été enregistrée.";
+                } else {
+                    echo "Échec de la modification.";
+                }
+            }
+        } elseif ($idrepresentant1 == null && $idrepresentant2 == null) {
+            // Vérifier que tous les champs soit remplis et que le bouton enregistrer ne soit pas null
+            if(isset($_POST['enregistrer']) && !empty($_POST['presentation']) && !empty($_POST['nomrep1']) && !empty($_POST['prenomrep1']) && !empty($_POST['telephonerep1']) && !empty($_POST['dispodebutrep1']) && !empty($_POST['dispofinrep1'])) {
+
+                $bdd = connexionservermysql($server, $db, $login, $mdp);
+
+                $presentation = $_POST['presentation'];
+                $nomrep1 = $_POST['nomrep1'];
+                $prenomrep1 = $_POST['prenomrep1'];
+                $telephonerep1 = $_POST['telephonerep1'];
+                $dispodebutrep1 = $_POST['dispodebutrep1'];
+                $dispofinrep1 = $_POST['dispofinrep1'];
+                $idrepresentant1 = $_POST['idrepresentant1'];
+                $nomrep2 = $_POST['nomrep2'];
+                $prenomrep2 = $_POST['prenomrep2'];
+                $telephonerep2 = $_POST['telephonerep2'];
+                $dispodebutrep2 = $_POST['dispodebutrep2'];
+                $dispofinrep2 = $_POST['dispofinrep2'];
+                $idrepresentant2 = $_POST['idrepresentant2'];
+                $identreprise = $_POST['identreprise'];
+
+                // Requête de mise à jour des données
+                $sqlEnt = 'UPDATE entreprise SET Presentation = :presentation WHERE Id_entreprise = :identreprise';
+
+                $reqEnt = $bdd->prepare($sqlEnt);
+
+                $execEnt = $reqEnt->execute(array('presentation'=>$presentation, 'identreprise'=>$identreprise));
+
+                $sqlRep1 = 'INSERT INTO representant(NomRepr, PrenomRepr, Telephone, Debut_dispo, Fin_dispo, Id_entreprise) VALUES (:nom, :prenom, :telephone, :debutdispo, :findispo, :identreprise)';
+
+                $reqRep1 = $bdd->prepare($sqlRep1);
+
+                $execRep1 = $reqRep1->execute(array('nom'=>$nomrep1, 'prenom'=>$prenomrep1, 'telephone'=>$telephonerep1, 'debutdispo'=>$dispodebutrep1, 'findispo'=>$dispofinrep1, 'identreprise'=>$identreprise));
+
+                $execRep2 = $reqRep1->execute(array('nom'=>$nomrep2, 'prenom'=>$prenomrep2, 'telephone'=>$telephonerep2, 'debutdispo'=>$dispodebutrep2, 'findispo'=>$dispofinrep2, 'identreprise'=>$identreprise));
+
+                // Vérifier la requête et redirection
+                if($execRep2 && $execRep1) {
+                    echo "Les données ont bien été enregistrées.";
+                } else {
+                    echo "Échec de l'enregistrement.";
+                }
+            }
+        }
+
         //uploader un fichier dans un dossier
         if(isset($_FILES['file'])){
             //variables créés par PHP
