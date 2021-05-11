@@ -1,5 +1,4 @@
-<?php	     
-
+<?php   
 	/*---------------------------------------------------------*/
 	/*------------------ LISTE DES FONCTIONS ------------------*/
     /*---------------------------------------------------------*/
@@ -49,7 +48,7 @@
 	*/
 	function genererMdp($nbChar)
 	{
-    	return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCEFGHIJKLMNOPQRSTUVWXYZ0123456789@!%$&£'),1, $nbChar); 
+    	return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCEFGHIJKLMNOPQRSTUVWXYZ0123456789@!%&'),1, $nbChar); 
     }
 
     /*
@@ -143,5 +142,5 @@
         } else {
             echo "Echec de l'envoi du mail.";
         }
-    }  
+    } 
 ?>
