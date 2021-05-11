@@ -1,7 +1,7 @@
 <?php
-        session_start();
+    session_start();
 	require 'util.php';
-        require 'config.php';
+    require 'config.php';
 	
 	//bouton déconnexion
 	if(isset($_GET['action']) && !empty($_GET['action']) && $_GET['action'] == 'logout'){
@@ -11,47 +11,70 @@
 ?>
 <!DOCTYPE HTML>
 <html lang="fr">
-	<head>
-		<meta charset="utf-8">
-		<title>Accueil | Forum Stage</title>
-	</head>
-	<body>
-		<!--L'utilisateur doit être connecté pour voir cette page-->
-		<?php if(estConnecte() && $_SESSION['userType'] == 'administrateur'): ?>
-                
-                <h1>Espace Administrateur</h1>
+<head>
+	<meta charset="utf-8">
+	<title>Espace administrateur | Forum Stage</title>
+</head>
+<body>
+	<header>
 
-                <!--Message temporaire pour la démo-->
-		<p> Bienvenue, vous vous êtes connecté avec <?= htmlspecialchars($_SESSION['userId']) ?>.
-		Votre type de compte est <?= htmlspecialchars($_SESSION['userType']) ?>.</p>
+<?php
+	require ("header.php");
+?>
 
-		<!--Boutons de navigation temporaires (ils seront dans le header-->
-		<nav>
-			<ul>
-				<li><a href="accueil_connecte.php">Planning</a></li>
-				<li><a href="chercher_stage.php">Chercher un stage</a></li>
-				<li><a href="liste_entreprises.php">Entreprises présentes</a></li>
-				<?php if($_SESSION['userType'] == 'entreprise'):?>
-				<li><a href="espace_entreprise.php">Votre espace</a></li>
-				<?php elseif($_SESSION['userType'] == 'étudiant'):?>
-				<li><a href="espace_etudiant.php">Votre espace</a></li>
-				<?php elseif($_SESSION['userType'] == 'administrateur'):?>
-				<li><a href="espace_admin.php">Votre espace</a></li>
-                                <?php endif;?>
-                                <li><a href="accueil_connecte.php?action=logout">Se déconnecter</a></li>
-			</ul>
-		</nav>
+	</header>
+	<main>
+
+<?php 
+	if(	estConnecte() && 
+		$_SESSION['userType'] == 'administrateur')
+	{ 
+?>            
+        <h1>Espace Administrateur</h1>
                 
-                <h2>Gestion des comptes</h2>
-		<p>Contenu à venir....</p>
-		<h2>Planning</h2>
-		<p>Contenu à venir....</p>
-		<h2>Statistiques</h2>
-		<p>Contenu à venir....</p>
+        <h2>Gestion des comptes</h2>
+        <form action="./creer_compte_entreprise.php" method="POST">
+        	<button type="submit"
+        			name="creerCompteEntr">
+        		Créer un compte entreprise
+        	</button>
+        </form>
+
+        <form action="./verif_infos_entreprise.php" method="POST">
+        	<button type="submit"
+        			name="verifInfosEntr">
+        		Vérifier les informations des entreprises
+        	</button>
+        </form>
+
+        <form action="./liste_comptes_etudiants.php" method="POST">
+        	<button type="submit"
+        			name="listeComptesEtu">
+        		Liste des comptes étudiants
+        	</button>
+        </form>
+
+        <h2>Planning</h2>
+        <form action="" method="POST">
+        	<button type="submit"
+        			name="exportPlanPDF">
+        		Exporter le planning en PDF
+        	</button>
+        </form>
+
+        <h2>Statistiques</h2>
+		<form action="" method="POST">
+        	<button type="submit"
+        			name="exportPlanPDF">
+        		Exporter les statistiques en CSV
+        	</button>
+        </form>
                 
-                <?php
-                else:
-                       echo "Merci de vous <a href='index.php'>connecter</a> pour voir cette page.";
-                endif; ?>
-	</body>
+ <?php
+    }else{
+        echo "Merci de vous <a href='index.php'>connecter</a> pour voir cette page.";
+    }
+?>
+    </main>
+</body>
 </html>
