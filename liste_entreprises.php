@@ -1,5 +1,6 @@
 <?php
-	include ("config.php");
+	include ("connexion.php");
+	include ("util.php");
 ?>
 
 <!DOCTYPE html>
@@ -9,8 +10,10 @@
 </head>
 
 <body>
-	<header>
-		
+	<header>	
+<?php
+	require("header.php");
+?>
 	</header>
 
 	<main>
@@ -19,6 +22,8 @@
 		<table class="tableau">
 			<tr>
 <?php
+
+	$bdd = connexionservermysql($server, $db, $login, $mdp);
 	//Requêtes SQL visant à récupérer la liste de toutes les entreprises
 	$reqListeEntreprises = $bdd->prepare('SELECT *	FROM 
 														entreprise'); 

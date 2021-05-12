@@ -1,10 +1,7 @@
 <?php
-
     session_start();
-
     require 'ecritureMDP.php';
-
-    require 'config.php';
+    require ("connexion.php");
 
 ?><!DOCTYPE HTML>
 <html>
@@ -13,6 +10,11 @@
         <title>Mot de passe oublié</title>
     </head>
     <body>
+    <header>
+<?php
+    require("header.php");
+?>        
+    </header>
 
         <?php
 

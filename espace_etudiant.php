@@ -50,8 +50,9 @@
 </head>
 <body>
 	<header>
-			
-
+<?php 
+	require ("header.php");
+?>
 	</header>
 <?php 
 	if(estConnecte() && $_SESSION['userType'] == 'étudiant'){ 
