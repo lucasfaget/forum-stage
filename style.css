@@ -27,6 +27,11 @@
 	min-width: 60px;
 }
 
+.tdNomEntreprise {
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
 .separationLigne {
 	height: 15px;
 }

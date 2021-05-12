@@ -1,7 +1,7 @@
 <?php
     session_start();
     require ("util.php");
-	require 'connexion.php';
+	require ('connexion.php');
 
 	$bdd = connexionservermysql($server, $db, $login, $mdp);
 	
@@ -12,8 +12,6 @@
 	 		!empty($_POST['saisie_mail']) &&
 		 	isset($_POST['saisie_mdp']) && 
 		 	!empty($_POST['saisie_mdp'])){
-
-	 		$bdd = connexionservermysql($server, $db, $login, $mdp);
 
             //Protection des données saisies
 			$saisie_mail = htmlspecialchars($_POST['saisie_mail']);
@@ -76,6 +74,7 @@
 		}else{ 
 			header('Location: index.php?err_connexion=ChampsVide');
 		}
+
 	}
 ?>
 <!DOCTYPE HTML>
@@ -137,7 +136,7 @@
 							</div>
 						</div>
 						<div class="mt-4">
-							<button type="submit" class="btn btn-secondary">Se connecter</button>
+							<button type="submit" name="btn_connexion" class="btn btn-secondary">Se connecter</button>
 						</div>
 						<div class="mt-2">
 			            	<a href="mdp_oublie1.php">Mot de passe oublié</a>
@@ -202,9 +201,9 @@
 						    		<?php
 
 						    		if ($row['nb_repr'] == 1) { ?>
-						    			<td scope="row" class="tdPlanning bg-dark text-white"><?php echo $row['NomEntr']; ?></td> <?php
+						    			<td scope="row" class="tdPlanning tdNomEntreprise bg-dark text-white"><?php echo $row['NomEntr']; ?></td> <?php
 						    		} else { ?>
-						    			<td scope="row" rowspan="2" class="tdPlanning bg-dark text-white"><?php echo $row['NomEntr']; ?></td> <?php
+						    			<td scope="row" rowspan="2" class="tdPlanning tdNomEntreprise bg-dark text-white"><?php echo $row['NomEntr']; ?></td> <?php
 						    		}
 
 						    		$i = 0;
