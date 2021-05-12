@@ -24,9 +24,11 @@
 
 <body>
 
-<header>
-	
-</header>
+    <header>
+<?php
+    require("header.php");
+?>        
+    </header>
 
 <main>
 	<h1> <?php echo $data['Intitule']; ?></h1>

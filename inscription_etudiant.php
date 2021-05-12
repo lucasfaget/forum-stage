@@ -80,7 +80,7 @@
 		<title>Inscription</title>
 	</head>
 	<body>
-	
+		
 		<h1>Inscription</h1>
 		
 		<p>Vous êtes étudiant et c'est votre première visite ? 

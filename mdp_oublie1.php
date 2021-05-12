@@ -1,8 +1,7 @@
 <?php
-
     session_start();
-
-    require 'config.php';
+    require ("connexion.php");
+    require ("util.php");
 
 ?><!DOCTYPE HTML>
 <html>
@@ -11,6 +10,14 @@
         <title>Mot de passe oublié</title>
     </head>
     <body>
+
+    <header>
+<?php
+    require("header.php");
+?>        
+    </header>
+
+    <main>
 
             <p>Un lien vous sera envoyé pour récupérer votre mot de passe</p>
             <p>Merci de contacter le responsable du Forum Stage si le problème persiste</p>
@@ -102,6 +109,6 @@
             }
 
         ?>
-
+    </main>
     </body>
 </html>

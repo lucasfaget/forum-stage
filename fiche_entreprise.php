@@ -18,9 +18,11 @@
 </head>
 
 <body>
-	<header>
-	
-	</header>
+    <header>
+<?php
+    require("header.php");
+?>        
+    </header>
 
 	<main>
 		<p> <?php echo $data['NomEntr']; ?> </p>
