@@ -36,7 +36,7 @@
     	<div class="table-responsive">
 	    	<table class="table">
 				<thead>
-			    	<tr>
+			    	<tr class="ligneUn">
 			    		<th scope="col"></th>
 			    		<th scope="col">08:00</th>
 			    		<th scope="col">08:30</th>
@@ -64,7 +64,7 @@
 
 			    		// on récupère toutes les réservations de l'entreprise
 				    	$select_rdv->execute(array($row['NomEntr'])) ?>
-				    	<tr>
+				    	<tr class="ligneTable">
 
 				    		<!-- On affiche le nom de l'entreprise -->
 				    		<th scope="row"><?php echo $row['NomEntr']; ?></th> <?php
@@ -75,7 +75,7 @@
 
 				    		while ($i <= 15) { ?>
 
-				    			<td> <?php
+				    			<td class="casePlanning"> <?php
 
 						    		// On affiche les réservations du créneau
 						    		while ($col['Heure'] === $array_heure[$i]) {
