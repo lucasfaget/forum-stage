@@ -2,6 +2,8 @@
 	session_start();
 	require ("connexion.php");
 	require ("util.php");
+
+	$bdd = connexionservermysql($server, $db, $login, $mdp);
 ?>
 
 <!DOCTYPE html>
@@ -48,10 +50,10 @@
 
 		    	$array_heure = array(0 => '08:00:00', 1 => '08:30:00', 2 => '09:00:00', 3 => '09:30:00', 4 => '10:30:00', 5 => '11:00:00', 6 => '11:30:00', 7 => '12:00:00', 8 => '13:00:00', 9 => '13:30:00', 10 => '14:00:00', 11 => '14:30:00', 12 => '15:00:00', 13  => '16:00:00', 14 => '16:30:00', 15 => '17:00:00');
 
-		    	$select_etp = $bdd->prepare('SELECT Etp.NomEntr, count(Repr.Id_representant) AS nb_repr FROM entreprise Etp, representant Repr WHERE Etp.Id_entreprise = Repr.Id_entreprise GROUP BY Etp.NomEntr');
+		    	$select_etp = $bdd->prepare('SELECT Etp.Id_entreprise, Etp.NomEntr, count(Repr.Id_representant) AS nb_repr FROM entreprise Etp, representant Repr WHERE Etp.Id_entreprise = Repr.Id_entreprise GROUP BY Etp.NomEntr');
 		    	$select_etp->execute();
 
-		    	$select_rdv = $bdd->prepare('SELECT concat(E.NomEtu, " ", substr(E.PrenomEtu,1,1), ".") AS NomP, R.Creneau FROM etudiant E, reserver R, stage S, entreprise Etp WHERE E.Id_etudiant = R.Id_etudiant AND R.Id_stage = S.Id_stage AND S.Id_entreprise = Etp.Id_entreprise AND Etp.NomEntr = ? ORDER BY R.Creneau'); ?>
+		    	$select_rdv = $bdd->prepare('SELECT concat(E.NomEtu, " ", substr(E.PrenomEtu,1,1), ".") AS NomP, R.Creneau FROM etudiant E, reserver R, stage S, entreprise Etp WHERE E.Id_etudiant = R.Id_etudiant AND R.Id_stage = S.Id_stage AND S.Id_entreprise = Etp.Id_entreprise AND Etp.Id_entreprise = ? ORDER BY R.Creneau'); ?>
 
 			    <div class="col text-center col-xl-9">
 			    	<div class="text-center">
@@ -86,10 +88,14 @@
 					    	while ($row = $select_etp->fetch()) {
 
 					    		// on récupère toutes les réservations de l'entreprise
-						    	$select_rdv->execute(array($row['NomEntr']));
-						    	$row_creneau = $select_rdv->fetch(); ?>
+						    	$select_rdv->execute(array($row['Id_entreprise']));
+						    	$row_creneau = $select_rdv->fetch();
 
-						    	<tr class="trPlanning">
+						    	$select_dispo_repr = $bdd->prepare('SELECT Debut_dispo, Fin_dispo FROM representant WHERE Id_entreprise = ?');
+								$select_dispo_repr->execute(array($row['Id_entreprise']));
+								$row_repr = $select_dispo_repr->fetch(); ?>
+
+						    	<tr>
 
 						    		<!-- On affiche le nom de l'entreprise -->
 						    		<?php
@@ -111,17 +117,13 @@
 					    					$row_creneau = $select_rdv->fetch();
 					    				}
 
-					    				if ($nb_creneau >= 1) {
-					    					if ($i%2 != 0) { ?>
-					    							<td class="tdPlanning fondGrisClair"><span><?php echo $array_nomP[0]; ?></span></td> <?php
-					    						} else { ?>
-					    							<td class="tdPlanning"><span><?php echo $array_nomP[0]; ?></span></td> <?php
-					    						}
-					    				} else { 
-					    					if ($i%2 != 0) { ?>
-					    						<td class="tdPlanning fondGrisClair"></td> <?php
+					    				if ($nb_creneau >= 1) { ?>
+					    					<td class="tdPlanning"><span><?php echo $array_nomP[0]; ?></span></td> <?php
+					    				} else {
+											if ($array_heure[$i] >= $row_repr['Debut_dispo'] and $array_heure[$i] < $row_repr['Fin_dispo']) { ?>
+					    						<td class="tdPlanning tdDisponible"></td> <?php
 					    					} else { ?>
-					    						<td class="tdPlanning"></td> <?php
+					    						<td class="tdPlanning tdNonDisponible"></td> <?php
 					    					}
 					    				}
 
@@ -131,11 +133,13 @@
 
 					    		</tr> <?php
 
-					    		if ($row['nb_repr'] == 2) { ?>
+					    		if ($row['nb_repr'] == 2) {
 
-						    		<tr class="trPlanning"> <?php
+					    			$row_repr = $select_dispo_repr->fetch(); ?>
 
-						    			$select_rdv->execute(array($row['NomEntr']));
+						    		<tr> <?php
+
+						    			$select_rdv->execute(array($row['Id_entreprise']));
 						    			$row_creneau = $select_rdv->fetch();
 
 						    			$i = 0;
@@ -149,19 +153,15 @@
 						    					$row_creneau = $select_rdv->fetch();
 						    				}
 
-							    			if ($nb_creneau == 2) {
-							    				if ($i%2 != 0) { ?>
-					    							<td class="tdPlanning fondGrisClair"><span><?php echo $array_nomP[1]; ?></span></td> <?php
-					    						} else { ?>
-					    							<td class="tdPlanning"><span><?php echo $array_nomP[1]; ?></span></td> <?php
-					    						}
-							    			} else {
-							    				if ($i%2 != 0) { ?>
-					    							<td class="tdPlanning fondGrisClair"></td> <?php
-					    						} else { ?>
-					    							<td class="tdPlanning"></td> <?php
-					    						}
-							    			}
+							    			if ($nb_creneau == 2) { ?>
+					    						<td class="tdPlanning"><span><?php echo $array_nomP[1]; ?></span></td> <?php
+					    				} else {
+											if ($array_heure[$i] >= $row_repr['Debut_dispo'] and $array_heure[$i] < $row_repr['Fin_dispo']) { ?>
+					    						<td class="tdPlanning tdDisponible"></td> <?php
+					    					} else { ?>
+					    						<td class="tdPlanning tdNonDisponible"></td> <?php
+					    					}
+					    				}
 
 									    	$i++;
 

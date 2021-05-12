@@ -19,17 +19,28 @@
 	min-width: 60px;
 }
 
+.tdNomEntreprise {
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
 .tdPlanning
 {
 	border-top: 1px solid #A9A9A9;
 	border-bottom: 1px solid #A9A9A9;
+	border-right: 1px solid #A9A9A9;
 	height: 60px;
 	min-width: 60px;
 }
 
-.tdNomEntreprise {
-	padding-right: 15px;
-	padding-left: 15px;
+.tdDisponible
+{
+	background-color: rgb(226,239,217);
+}
+
+.tdNonDisponible
+{
+	background-color: rgb(251,229,213);
 }
 
 .separationLigne {
