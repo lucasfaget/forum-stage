@@ -36,7 +36,7 @@
     	<div class="table-responsive">
 	    	<table class="table">
 				<thead>
-			    	<tr class="ligneUn">
+			    	<tr>
 			    		<th scope="col"></th>
 			    		<th scope="col">08:00</th>
 			    		<th scope="col">08:30</th>

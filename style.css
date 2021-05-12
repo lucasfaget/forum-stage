@@ -11,10 +11,23 @@
 
 .tablePlanning
 {
-	border-collapse: separate;
-	border-spacing: 0 0.2rem;
+	
 }
 
-.ligneUn {
-	border: none;
+.thPlanning
+{
+	min-width: 60px;
 }
+
+.tdPlanning
+{
+	border-top: 1px solid #A9A9A9;
+	border-bottom: 1px solid #A9A9A9;
+	height: 60px;
+	min-width: 60px;
+}
+
+.separationLigne {
+	height: 15px;
+}
+

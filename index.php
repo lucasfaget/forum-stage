@@ -120,9 +120,10 @@
 				}
 			}
 		?>
+
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col text-center bg-dark col-md-2">
+				<div class="col text-center bg-dark col-xl-3 vh-100">
 					<img class="mt-3" src="ressources/logoIUT.png" alt="logo iut" alt="Grapefruit slice atop a pile of other slices">
 					<form method="post">
 						<div class="d-flex justify-content-center">
@@ -159,27 +160,30 @@
 
 		    	$select_rdv = $bdd->prepare('SELECT concat(E.NomEtu, " ", substr(E.PrenomEtu,1,1), ".") AS NomP, R.Creneau FROM etudiant E, reserver R, stage S, entreprise Etp WHERE E.Id_etudiant = R.Id_etudiant AND R.Id_stage = S.Id_stage AND S.Id_entreprise = Etp.Id_entreprise AND Etp.NomEntr = ? ORDER BY R.Creneau'); ?>
 
-			    <div class="col text-center col-md-10">
+			    <div class="col text-center col-xl-9">
+			    	<div class="text-center">
+			    		<h1>Planning du forum stage</h1>
+			    	</div>
 			    	<table class="tablePlanning">
 						<thead>
 					    	<tr>
-					    		<th scope="col"></th>
-					    		<th scope="col">08:00</th>
-					    		<th scope="col"><span class="fondGrisClair">08:30</span></th>
-					    		<th scope="col">09:00</th>
-					    		<th scope="col"><span class="fondGrisClair">09:30</span></th>
-					    		<th scope="col">10:30</th>
-					    		<th scope="col"><span class="fondGrisClair">11:00</span></th>
-					    		<th scope="col">11:30</th>
-					    		<th scope="col"><span class="fondGrisClair">12:00</span></th>
-					    		<th scope="col">13:00</th>
-					    		<th scope="col"><span class="fondGrisClair">13:30</span></th>
-					    		<th scope="col">14:00</th>
-					    		<th scope="col"><span class="fondGrisClair">14:30</span></th>
-					    		<th scope="col">15:00</th>
-					    		<th scope="col"><span class="fondGrisClair">16:00</span></th>
-					    		<th scope="col">16:30</th>
-					    		<th scope="col"><span class="fondGrisClair">17:00</span></th>
+					    		<th class="thPlanning" scope="col"></th>
+					    		<th class="thPlanning" scope="col">08:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">08:30</span></th>
+					    		<th class="thPlanning" scope="col">09:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">09:30</span></th>
+					    		<th class="thPlanning" scope="col">10:30</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">11:00</span></th>
+					    		<th class="thPlanning" scope="col">11:30</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">12:00</span></th>
+					    		<th class="thPlanning" scope="col">13:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">13:30</span></th>
+					    		<th class="thPlanning" scope="col">14:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">14:30</span></th>
+					    		<th class="thPlanning" scope="col">15:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">16:00</span></th>
+					    		<th class="thPlanning" scope="col">16:30</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">17:00</span></th>
 					    	</tr>
 					    </thead>
 					    <tbody>
@@ -187,20 +191,20 @@
 					    	<?php
 					    	// pour toutes les entreprises
 					    	while ($row = $select_etp->fetch()) {
-					    		var_dump($row['nb_repr']);
+
 					    		// on récupère toutes les réservations de l'entreprise
 						    	$select_rdv->execute(array($row['NomEntr']));
 						    	$row_creneau = $select_rdv->fetch(); ?>
 
-						    	<tr>
+						    	<tr class="trPlanning">
 
 						    		<!-- On affiche le nom de l'entreprise -->
 						    		<?php
 
 						    		if ($row['nb_repr'] == 1) { ?>
-						    			<td scope="row" class="bg-dark text-white"><?php echo $row['NomEntr']; ?></td> <?php
+						    			<td scope="row" class="tdPlanning bg-dark text-white"><?php echo $row['NomEntr']; ?></td> <?php
 						    		} else { ?>
-						    			<td scope="row" rowspan="2" class="bg-dark text-white"><?php echo $row['NomEntr']; ?></td> <?php
+						    			<td scope="row" rowspan="2" class="tdPlanning bg-dark text-white"><?php echo $row['NomEntr']; ?></td> <?php
 						    		}
 
 						    		$i = 0;
@@ -215,9 +219,13 @@
 
 						    			// afficher
 					    				if ($nb_creneau >= 1) { ?>
-					    					<td class="fondGrisFonce"><span> X </span></td> <?php
-					    				} else { ?>
-					    					<td></td> <?php
+					    					<td class="tdPlanning fondGrisFonce"><span> X </span></td> <?php
+					    				} else { 
+					    					if ($i%2 != 0) { ?>
+					    						<td class="tdPlanning fondGrisClair"></td> <?php
+					    					} else { ?>
+					    						<td class="tdPlanning"></td> <?php
+					    					}
 					    				}
 
 					    				$i++;
@@ -228,7 +236,7 @@
 
 					    		if ($row['nb_repr'] == 2) { ?>
 
-						    		<tr> <?php
+						    		<tr class="trPlanning"> <?php
 
 						    			$select_rdv->execute(array($row['NomEntr']));
 						    			$row_creneau = $select_rdv->fetch();
@@ -243,9 +251,13 @@
 						    				}
 
 							    			if ($nb_creneau == 2) { ?>
-							    				<td class="fondGrisFonce"><span> X </span></td> <?php
-							    			} else { ?>
-							    				<td></td> <?php
+							    				<td class="tdPlanning fondGrisFonce"><span> X </span></td> <?php
+							    			} else {
+							    				if ($i%2 != 0) { ?>
+					    							<td class="tdPlanning fondGrisClair"></td> <?php
+					    						} else { ?>
+					    							<td class="tdPlanning"></td> <?php
+					    						}
 							    			}
 
 									    	$i++;
@@ -254,11 +266,36 @@
 						
 							    	</tr> <?php
 
-						    	}
+						    	} ?>
+
+						    	<tr class="separationLigne">
+
+							    </tr> <?php
 
 					      	} ?>
 
 						</tbody>
+						<tfoot>
+					    	<tr>
+					    		<th class="thPlanning" scope="col"></th>
+					    		<th class="thPlanning" scope="col">08:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">08:30</span></th>
+					    		<th class="thPlanning" scope="col">09:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">09:30</span></th>
+					    		<th class="thPlanning" scope="col">10:30</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">11:00</span></th>
+					    		<th class="thPlanning" scope="col">11:30</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">12:00</span></th>
+					    		<th class="thPlanning" scope="col">13:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">13:30</span></th>
+					    		<th class="thPlanning" scope="col">14:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">14:30</span></th>
+					    		<th class="thPlanning" scope="col">15:00</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">16:00</span></th>
+					    		<th class="thPlanning" scope="col">16:30</th>
+					    		<th class="thPlanning" scope="col"><span class="fondGrisClair">17:00</span></th>
+					    	</tr>
+					    </tfoot>
 					</table>
 				</div>
 			</div>
