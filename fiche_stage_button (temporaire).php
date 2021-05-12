@@ -1,6 +1,6 @@
 <?php
 
-	require 'config.php';
+	require 'connexion.php';
 
 ?>
 
@@ -17,17 +17,19 @@
 
     	<?php
 
+    	$bdd = connexionservermysql($server, $db, $login, $mdp);
+
     	$array_heure = array(0 => '08:00:00', 1 => '08:30:00', 2 => '09:00:00', 3 => '09:30:00', 4 => '10:30:00', 5 => '11:00:00', 6 => '11:30:00', 7 => '12:00:00', 8 => '13:00:00', 9 => '13:30:00', 10 => '14:00:00', 11 => '14:30:00', 12 => '15:00:00', 13  => '16:00:00', 14 => '16:30:00', 15 => '17:00:00');
 
     	if (isset($_POST['submit_reserver'])) {
 
     		// il faut impérativement que $id_stage correspond à $id_entreprise
-    		$id_etudiant = 1; // affecter la variable de session qui stocke l'id de l'étudiant
-    		$id_entreprise = 1;
-    		$id_stage = 1;
+    		$id_etudiant = 7; // affecter la variable de session qui stocke l'id de l'étudiant
+    		$id_entreprise = 4;
+    		$id_stage = 7;
 
     		// On récupère le nombre de créneaux réservés par l'étudiant
-    		$select_rdv_etu = $link->prepare('SELECT Id_etudiant FROM reserver WHERE Id_etudiant = ?');
+    		$select_rdv_etu = $bdd->prepare('SELECT Id_etudiant FROM reserver WHERE Id_etudiant = ?');
     		$select_rdv_etu->execute(array($id_etudiant));
     		$result = $select_rdv_etu->fetchAll();
 
@@ -37,14 +39,14 @@
     		if (count($result) < 3) {
 
     			// l'étudiant ne peut pas réserver un second créneau pour un même stage
-    			$select_rdv_etu_stage = $link->prepare('SELECT Id_Etudiant FROM reserver WHERE Id_etudiant = ? AND Id_stage = ?');
+    			$select_rdv_etu_stage = $bdd->prepare('SELECT Id_Etudiant FROM reserver WHERE Id_etudiant = ? AND Id_stage = ?');
     			$select_rdv_etu_stage->execute(array($id_etudiant, $id_stage));
     			$result = $select_rdv_etu_stage->fetchAll();
 
     			if (count($result) == 0) {
 
 		    		// On recherche dans la base les créneaux et leur nombre pour l'entreprise en question
-		    		$select_creneau = $link->prepare('SELECT R.Creneau, count(*) AS nb_creneau_reserve FROM reserver R, stage S, entreprise Etp WHERE R.Id_stage = S.Id_stage AND S.Id_entreprise = Etp.Id_entreprise AND Etp.Id_entreprise = ? GROUP BY R.Creneau ORDER BY R.Creneau;');
+		    		$select_creneau = $bdd->prepare('SELECT R.Creneau, count(*) AS nb_creneau_reserve FROM reserver R, stage S, entreprise Etp WHERE R.Id_stage = S.Id_stage AND S.Id_entreprise = Etp.Id_entreprise AND Etp.Id_entreprise = ? GROUP BY R.Creneau ORDER BY R.Creneau;');
 		    		$select_creneau->execute(array($id_entreprise));
 		    		$row_creneau = $select_creneau->fetch();
 		    		
@@ -63,7 +65,7 @@
 
 		    		var_dump($array_creneau);
 
-					$select_dispo_repr = $link->prepare('SELECT Debut_dispo, Fin_dispo FROM representant WHERE Id_entreprise = ?');
+					$select_dispo_repr = $bdd->prepare('SELECT Debut_dispo, Fin_dispo FROM representant WHERE Id_entreprise = ?');
 					$select_dispo_repr->execute(array($id_entreprise));
 					$result_dispo = $select_dispo_repr->fetchAll();
 
@@ -160,7 +162,7 @@
 
 					if ($creneau_trouve == true) {
 
-						$insert_rdv = $link->prepare('INSERT INTO reserver VALUES (?,?,?)');
+						$insert_rdv = $bdd->prepare('INSERT INTO reserver VALUES (?,?,?)');
 						$insert_rdv->execute(array($id_etudiant, $id_stage, $creneau_dispo));
 
 						if ($insert_rdv) {
