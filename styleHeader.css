@@ -1,0 +1,49 @@
+/*---- HEADER ----*/
+
+.headerGlobal 
+{
+	display: 			flex;
+	flex-direction: 	row;
+	justify-content: 	left;
+	background-color: 	rgb(255,255,255);
+	width: 				100%;
+}
+
+.headerGlobal .retourAccueil
+{
+	display: 			flex;
+	flex-direction: 	row;
+	width: 				5%;
+	justify-content: 	center;
+}
+
+.headerGlobal .headerFondRouge
+{
+	display: 			flex;
+	flex-direction: 	row;
+	background-color: 	rgb(207,51,50);
+	width: 				80%;
+	justify-content: 	right;
+}
+
+.headerGlobal .headerFondRouge .itemHeader
+{
+	align-self: 		center;
+	width: 				15%;
+	font-size: 			1.2em;
+	height: 			100%;
+}
+
+.headerGlobal .headerFondRouge .itemHeader a
+{
+	color: 				rgb(255,255,255);
+	text-decoration: 	none;
+}
+
+.headerGlobal .headerFondNoir
+{
+	display: 			flex;
+	flex-direction: 	row;
+	background-color: 	rgb(52,52,52);
+	width: 				15%;
+}

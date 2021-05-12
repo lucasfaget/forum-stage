@@ -14,30 +14,6 @@ header {
 	flex: 1;
 }
 
-nav ul
-{
-	list-style-type: none;
-}
-
-nav li {
-	float: left;
-}
-
-nav a
-{
-	display: block;
-	text-decoration: none;
-	background-color: red;
-	color: white;
-	text-decoration: none;
-	padding: 20px 50px;
-}
-
-nav a:hover
-{
-  background-color: darkred;
-}
-
 .lastItem {
 	background-color: black;
 }

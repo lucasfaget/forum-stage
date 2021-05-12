@@ -66,6 +66,12 @@ session_start();
 
   <body>
 
+    <header>
+<?php
+    require("header.php");
+?>        
+    </header>
+    
     <h1>Modifier stage</h1>
 
     <form action="<?php echo "modifier_stage.php?idstage=".$idstage; ?>" method="POST">

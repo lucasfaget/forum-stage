@@ -43,6 +43,12 @@ if(isset($_POST['Enregistrer']) && !empty($_POST['intitulestage']) && !empty($_P
 
   <body>
 
+    <header>
+<?php
+    require("header.php");
+?>        
+    </header>
+
     <h1>Ajout stage</h1>
 
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
